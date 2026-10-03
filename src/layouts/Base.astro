@@ -1,0 +1,46 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const siteName = 'Taanish R';
+const pageTitle = title ? `${title} | ${siteName}` : siteName;
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-name" href="/">{siteName}</a>
+      <nav>
+        <a href="/" aria-current={path === '/' || path.startsWith('/posts') ? 'page' : undefined}>posts</a>
+        <a href="/about" aria-current={path.startsWith('/about') ? 'page' : undefined}>about</a>
+        <a href="/resume.pdf">resume</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <a href="https://github.com/taanishr">github</a>
+      <a href="https://www.linkedin.com/in/taanish-reja">linkedin</a>
+    </footer>
+  </body>
+</html>

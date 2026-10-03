@@ -1,0 +1,62 @@
+<figure class="contributions" data-contributions>
+  <div class="contributions-grid" aria-label="GitHub contribution graph"></div>
+  <figcaption class="contributions-total"></figcaption>
+</figure>
+
+<script>
+  import type { Contributions } from '../lib/contributions';
+
+  const levels = [0, 1, 4, 8, 12];
+
+  function level(count: number) {
+    let result = 0;
+    levels.forEach((threshold, index) => {
+      if (count >= threshold) result = index;
+    });
+    return result;
+  }
+
+  async function render(root: HTMLElement) {
+    const grid = root.querySelector<HTMLElement>('.contributions-grid')!;
+    const total = root.querySelector<HTMLElement>('.contributions-total')!;
+
+    try {
+      const response = await fetch('/api/contributions');
+      if (!response.ok) throw new Error(String(response.status));
+      const data: Contributions = await response.json();
+
+      for (const week of data.weeks) {
+        const column = document.createElement('div');
+        column.className = 'contributions-week';
+        for (const day of week) {
+          const cell = document.createElement('div');
+          cell.className = `contributions-day level-${level(day.count)}`;
+          cell.title = `${day.count} contribution${day.count === 1 ? '' : 's'} on ${day.date}`;
+          column.appendChild(cell);
+        }
+        grid.appendChild(column);
+      }
+      total.textContent = `${data.total} contributions in the last year`;
+    } catch {
+      root.remove();
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-contributions]').forEach(render);
+</script>
+
+<style is:global>
+  .contributions-grid {
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+  .contributions-week { display: flex; flex-direction: column; gap: 3px; }
+  .contributions-day { width: 10px; height: 10px; border-radius: 2px; }
+  .contributions-day.level-0 { background: oklch(96% 0.012 293.283); }
+  .contributions-day.level-1 { background: oklch(89.4% 0.057 293.283); }
+  .contributions-day.level-2 { background: oklch(76% 0.11 293.283); }
+  .contributions-day.level-3 { background: oklch(62% 0.16 293.283); }
+  .contributions-day.level-4 { background: oklch(48% 0.18 293.283); }
+</style>
