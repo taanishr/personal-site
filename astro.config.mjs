@@ -21,7 +21,7 @@ const contributionsDevApi = {
 };
 
 export default defineConfig({
-  site: 'https://example.pages.dev',
+  site: 'https://taanishr.com',
   integrations: [mdx()],
   markdown: {
     shikiConfig: { theme: 'github-light' },
