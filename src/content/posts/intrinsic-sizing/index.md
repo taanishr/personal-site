@@ -140,4 +140,4 @@ By establishing mutability boundaries and clearly defining our contracts and exp
 ## Notes
 - My definition of intrinsic sizing is not an *exact* match of what the HTML/CSS spec says, but it is relatively close and generally asks what size an element is based on its children.
 - I make several simplifications for the sake of the reader. The numeric border box examples aren't meant as a precise treatment of how border boxes work.
-- For more concrete examples of what complex conditionals in Blink might look like, see [LayoutNG blog](https://developer.chrome.com/docs/chromium/layoutng)
+- For more concrete examples of what complex conditionals in Blink might look like, see the [LayoutNG blog](https://developer.chrome.com/docs/chromium/layoutng)
