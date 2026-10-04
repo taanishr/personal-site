@@ -44,7 +44,7 @@ If you've ever read Chrome's codebase, you'll see that layout and sizing are *hi
 1. What size should my container be?
 2. How should I size my own children?
 
-Most layout modes, including flex/grid, ultimately collapse to  sizing their container as either a block element or an inline element. And so we can structure each layout mode as first determining your container size via a request struct through a centralized resolver, then sizing your children. In block sizing, children size themselves; grid/flex require multiple passes as we resolve more and more constraints.
+Most layout modes, including flex/grid, ultimately collapse to sizing their container as either a block element or an inline element. And so we can structure each layout mode as first determining your container size via a request struct through a centralized resolver, then sizing your children. In block sizing, children size themselves; grid/flex require multiple passes as we resolve more and more constraints.
 
 This eliminates essentially all these special sizing flags, and makes each layout mode quite clear. It also allows us to separate size resolution from finalization, which means sizes only really ever get set in one place. With this, we can cleanly guard mutability in one place.
 
@@ -63,7 +63,7 @@ This will launch another recursion over the tree starting at that node, except w
 
 In this mode, each child tells the parent its extent; we'll take the max of these extents. Once we return from that mode, we'll get an *intrinsic size*: in this case, a `302px` width. Our original sizing request, which kicked off the measurement, will use that result to determine its regular border box size. This will be returned in the mutating layout pass, which then finalizes the element's size.
 
-Note, there's some complicated bookkeeping that comes out of this; we might have to deal with offsets, we have to adjust the cursor for siblings, etc..., and that's caused some painful bugs, but it's not anything major architecturally. But that's the gist of it.
+Note, there's some complicated bookkeeping that comes out of this; we might have to deal with offsets, we have to adjust the cursor for siblings, etc... and that's caused some painful bugs, but it's not anything major architecturally. But that's the gist of it.
 
 ## Generalizing this to deep subtrees
 The idea of considering the border box is smart, but I faced some problems actually encoding this idea.
