@@ -48,10 +48,6 @@ Some cool demos made using my library:
 <figcaption>a demo claude generated on its own whims using my library</figcaption>
 </figure>
 
-### Graphics programming w/ Metal and ML optimization w/ CUDA in C++ 
-- metal-playground
-- research work
-
 ### [bookmarkmanga.com](https://bookmarkmanga.com) 
 Manga tracker w/ AI features; Next.js frontend + fastify backend + Rust inference + Some python services (e.g. faiss), hosted on AWS. It is currently down :(
 
@@ -93,6 +89,16 @@ Some screenshots:
 
 ### [accelerarch.com](https://accelerarch.com) 
 Project management software for architects; Next.js frontend + fastify backend, hosted on AWS
+
+### optimizing compiler for lisp-Like Language
+Wrote an optimizing compiler for my compilers class in Rust. Ended up with dead-code elimination, constant folding, loop unrolling, some inlining,
+and JIT, AOT and REPL modes. The JIT took weeks off my life.
+
+### peer-to-peer vs code live share
+For my distributed systems class, I built a peer-to-peer version of vs code live share. It's based on a leader-replica model, where replicas send their edits
+to a leader that reorder them via a sequencing algorithm based on a lamport clock (per sequencing round) and wall-cllock time. I used raft for leader
+reelection, and employed one trick from [Bayou](https://dl.acm.org/citation.cfm?doid=224056.224070) where replicas preemptively sequence their own
+edits with respect to their last recieved log (not full-blown anti-entropy, though, as this project had a leader-replica model).
 
 ## things unrelated to employment (this is a personal website):
 - i spend lots of time programming
