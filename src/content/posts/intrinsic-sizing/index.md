@@ -48,7 +48,7 @@ Most layout modes, including flex/grid, ultimately collapse to sizing their cont
 
 This eliminates essentially all these special sizing flags, and makes each layout mode quite clear. It also allows us to separate size resolution from finalization, which means sizes only really ever get set in one place. With this, we can cleanly guard mutability in one place.
 
-Given my explanation, you might be wondering *why* Blink doesn't just use an explicit flag; this seems cheaper than immutable fragments. When you use flags, you also have to make sure you aren't accidentally leaking something inconsistent with your architectural contracts. For example, during intrinsic sizing, you want to forgo any previously set sizing overrides. Otherwise, you won't be collecting intrinsic sizes. At ~30,000 lines of code, this is relatively simple to manage. At ~30,000,000 lines of code, this is far harder to enforce. As the [Blink team wrote](https://developer.chrome.com/docs/chromium/layoutng), "If the code made the mistake of reading the size or position of an object at the incorrect time or stage (as we didn't "clear" the previous size or position for example), we would immediately add a subtle hysteresis bug."
+Given my explanation, you might be wondering *why* Blink doesn't just use an explicit flag; this seems cheaper than immutable fragments. When you use flags, you also have to make sure you aren't accidentally leaking something inconsistent with your architectural contracts. For example, during intrinsic sizing, you want to forgo any previously set sizing overrides. Otherwise, you won't be collecting intrinsic sizes. At ~30,000 lines of code, this is relatively simple to manage. At ~30,000,000 lines of code, this is far harder to enforce. As the [Blink team wrote](https://developer.chrome.com/docs/chromium/layoutng), "If the code made the mistake of reading the size or position of an object at the incorrect time or stage (as we didn't 'clear' the previous size or position for example), we would immediately add a subtle hysteresis bug."
 
 ## Going back to Intrinsic Sizing
 With the immutability question solved, intrinsic sizing becomes very easy. From our mutable pass, we'll ask our children to size themselves in an immutable pass, then use that information for mutable sizing.
@@ -63,7 +63,7 @@ This will launch another recursion over the tree starting at that node, except w
 
 In this mode, each child tells the parent its extent; we'll take the max of these extents. Once we return from that mode, we'll get an *intrinsic size*: in this case, a `302px` width. Our original sizing request, which kicked off the measurement, will use that result to determine its regular border box size. This will be returned in the mutating layout pass, which then finalizes the element's size.
 
-Note, there's some complicated bookkeeping that comes out of this; we might have to deal with offsets, we have to adjust the cursor for siblings, etc... and that's caused some painful bugs, but it's not anything major architecturally. But that's the gist of it.
+Note: there's some complicated bookkeeping that comes out of this; we might have to deal with offsets, we have to adjust the cursor for siblings, etc... and that's caused some painful bugs, but it's not anything major architecturally. But that's the gist of it.
 
 ## Generalizing this to deep subtrees
 The idea of considering the border box is smart, but I faced some problems actually encoding this idea.
