@@ -4,6 +4,7 @@ title: about
 ---
 
 import Contributions from '../components/Contributions.astro';
+import NowPlaying from '../components/NowPlaying.astro';
 
 hi, \
 I'm Taanish Reja, a 4th year CS student @ UCSD. I like working on compilers, PL and GPU programming problems.
@@ -96,11 +97,13 @@ and JIT, AOT and REPL modes. The JIT took weeks off my life.
 
 ### peer-to-peer vs code live share
 For my distributed systems class, I built a peer-to-peer version of vs code live share. It's based on a leader-replica model, where replicas send their edits
-to a leader that reorder them via a sequencing algorithm based on a lamport clock (per sequencing round) and wall-cllock time. I used raft for leader
+to a leader that reorders them via a sequencing algorithm based on a lamport clock (per sequencing round) and wall clock time. I used raft for leader
 reelection, and employed one trick from [Bayou](https://dl.acm.org/citation.cfm?doid=224056.224070) where replicas preemptively sequence their own
-edits with respect to their last recieved log (not full-blown anti-entropy, though, as this project had a leader-replica model).
+edits with respect to their last received log (not full-blown anti-entropy, though, as this project had a leader-replica model).
 
 ## things unrelated to employment (this is a personal website):
 - i spend lots of time programming
 - i do fashion design
 - i like hip hop music
+
+<NowPlaying />

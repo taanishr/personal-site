@@ -1,0 +1,35 @@
+<p class="now-playing" data-now-playing hidden>
+  <span class="now-playing-note">♪</span>
+  <span class="now-playing-label"></span>
+  <a class="now-playing-title" target="_blank" rel="noopener"></a>
+  <span class="now-playing-artist"></span>
+</p>
+
+<script>
+  import type { NowPlaying } from '../lib/spotify';
+
+  async function render(root: HTMLElement) {
+    try {
+      const response = await fetch('/api/now-playing');
+      if (!response.ok) return;
+      const data: NowPlaying | null = await response.json();
+      if (!data) return;
+
+      root.querySelector<HTMLElement>('.now-playing-label')!.textContent = data.playing ? 'now playing:' : 'last played:';
+      const title = root.querySelector<HTMLAnchorElement>('.now-playing-title')!;
+      title.textContent = data.title;
+      title.href = data.url;
+      root.querySelector<HTMLElement>('.now-playing-artist')!.textContent = `— ${data.artist}`;
+      root.classList.toggle('is-playing', data.playing);
+      root.hidden = false;
+    } catch {}
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-now-playing]').forEach(render);
+</script>
+
+<style is:global>
+  .now-playing { color: var(--fg-dim); font-size: 0.9rem; }
+  .now-playing-note { color: var(--accent); }
+  .now-playing.is-playing .now-playing-note { color: var(--link); }
+</style>
