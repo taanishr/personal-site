@@ -130,7 +130,7 @@ switch (display) {
 }
 ```
 
-Instead of just being for sizing children, these modes could also become the resolvers for intrinsic sizing. And thus, we could encode each layout mode's border-box differences (i.e. text not including vertical padding) while ensuring we never double or under-count padding/borders.
+Instead of just being for sizing children, these modes could also become the resolvers for intrinsic sizing. And thus, we could encode each layout mode's border-box differences (e.g. text not including vertical padding) while ensuring we never double or under-count padding/borders.
 
 ## Conclusion
 By centralizing sizing, my browser renderer shrinks the sizing decision space. Any flags we need to kick off intrinsic sizing touch one surface (like disabling the sizing overrides in `measureIntrinsicWidth/Height` and disabling mutability over the tree). This makes encoding immutability far easier; there's only ever one place sizes are set, so we can just guard it against our `mutate` flag. And by thinking about the producer-consumer relationship of intrinsic sizes, we can shore up the problem of consistently returning a border box across layout modes. 
