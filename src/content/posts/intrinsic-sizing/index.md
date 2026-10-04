@@ -5,7 +5,7 @@ description: "How I cleanly defined a recursive sizing algorithm based on notion
 ---
 
 The HTML/CSS spec is extremely flexible in how it lets programmers size elements. The freedom granted by notions like intrinsic sizing - sizing an element based on its content - allows programmers to define responsive apps with ease. 
-
+ 
 These compositional and styling choices get encoded in what we call the DOM tree. The DOM tree defines a tree with semantic elements as nodes. Children and styling attributes become a part of the parent's subtree.
 
 Every decision then becomes recursion over this tree. But there's a clash between intrinsic sizing and this tree. Intrinsic sizing requires multiple passes: a pass that asks, *what size are my children?*, and a pass that actually sizes the element. One pass writes; one pass does not. One pass allows the parent to override the sizes that its children have (think about flex or grid); one pass recursively searches for each element's size based on its children's sizes. And what about text? Inline text doesn't include vertical padding, so our intrinsic sizing algorithm needs to address these small differences among layout modes.
@@ -30,7 +30,7 @@ This naturally leads to separating the *tree* from *effects*. When we want to si
 
 Given this separation, as a content-sized node, we can then easily ask our children in a separate immutable view of the tree what their size would be, taking the max-extents for that final answer. Additionally, we can memoize these results in case someone else needs them for a question. This makes the actual algorithm *mostly* O(n), since for the exact same sizing and layout constraints, we will never run sizing twice. That being said, multi-pass algorithms like Grid/Flex, or content-based sizing, complicate this claim.
 
-## Comparing models of immutability and mutability
+## Comparing Models of Immutability and Mutability
 LayoutNG, Blink's layout engine, also stresses the idea of mutability vs. immutability. However, they encode this more explicitly: the tree is always immutable, and recursion over the tree generates fragments that may be used for answering questions or setting a node's final size.
 
 Their old solution was very similar to mine, with "mutable" and "immutable" passes over their layout tree. Where my solution differs from Blink's old solution is in how we encode mutability.
@@ -50,7 +50,7 @@ This eliminates essentially all these special sizing flags, and makes each layou
 
 Given my explanation, you might be wondering *why* Blink doesn't just use an explicit flag; this seems cheaper than immutable fragments. When you use flags, you also have to make sure you aren't accidentally leaking something inconsistent with your architectural contracts. For example, during intrinsic sizing, you want to forgo any previously set sizing overrides. Otherwise, you won't be collecting intrinsic sizes. At ~30,000 lines of code, this is relatively simple to manage. At ~30,000,000 lines of code, this is far harder to enforce. As the [Blink team wrote](https://developer.chrome.com/docs/chromium/layoutng), "If the code made the mistake of reading the size or position of an object at the incorrect time or stage (as we didn't 'clear' the previous size or position for example), we would immediately add a subtle hysteresis bug."
 
-## Going back to Intrinsic Sizing
+## Going Back to Intrinsic Sizing
 With the immutability question solved, intrinsic sizing becomes very easy. From our mutable pass, we'll ask our children to size themselves in an immutable pass, then use that information for mutable sizing.
 
 Let's say we have a parent that requests a content size width, with three children: one `200px` wide, one `300px` wide, and one `100px` wide. Let's say the second has a border of `2px`.
@@ -65,7 +65,7 @@ In this mode, each child tells the parent its extent; we'll take the max of thes
 
 Note: there's some complicated bookkeeping that comes out of this; we might have to deal with offsets, we have to adjust the cursor for siblings, etc... and that's caused some painful bugs, but it's not anything major architecturally. But that's the gist of it.
 
-## Generalizing this to deep subtrees
+## Generalizing This to Deep Subtrees
 The idea of considering the border box is smart, but I faced some problems actually encoding this idea.
 
 The centralized sizing evaluator in this library is `evaluateSize`, which dispatches certain jobs to other functions. If the node requires intrinsic sizing, either explicitly in the request or implicitly because of the node's constraints, we might make a call to `measureIntrinsicWidth` or `measureIntrinsicHeight`, which then makes a recursive layout call with two flags set: that we want to return intrinsic sizes, and that we do not want to mutate the tree.
